@@ -16,7 +16,7 @@ stamps.
 count and sale to list ratio.
 
 ## Relation Schema (ER Diagram)
-
+![Alt text](./figs/ER.png?raw=true)
 
 ## Information
 
