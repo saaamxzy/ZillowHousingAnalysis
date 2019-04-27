@@ -18,6 +18,9 @@ count and sale to list ratio.
 ## Relation Schema (ER Diagram)
 ![Alt text](./figs/ER.png?raw=true)
 
+## SQL commands to create the database
+Refer to [here](./milestone2/Milestone2.pdf)
+
 ## Requirements for developers
 
 Please Add Oracle 18, 12, or 11.2 client libraries to your operating system library search path such as
