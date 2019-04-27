@@ -18,12 +18,14 @@ count and sale to list ratio.
 ## Relation Schema (ER Diagram)
 ![Alt text](./figs/ER.png?raw=true)
 
-## Requirements
+## Requirements for developers
 
 Please Add Oracle 18, 12, or 11.2 client libraries to your operating system library search path such as
-`PATH` on Windows or LD_LIBRARY_PATH on Linux. On macOS move the libraries to `~/lib` or `/usr/local/lib`.
+`PATH` on Windows or LD_LIBRARY_PATH on Linux. On macOS move the libraries to `~/lib` or `/usr/local/lib`. 
+Refer to the OracleDB [installation manual](https://oracle.github.io/node-oracledb/INSTALL.html#-2-quick-start-node-oracledb-installation)
+on how to do this.
 
-Refer to the OracleDB [installation manual](https://oracle.github.io/node-oracledb/INSTALL.html#-2-quick-start-node-oracledb-installation).
+Other dependencies are settled within the html file headers.
 
 ## Information
 
