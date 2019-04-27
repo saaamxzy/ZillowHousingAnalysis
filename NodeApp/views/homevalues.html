@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<html ng-app="angularjsNodejsTutorial">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CIS550 Project</title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="javascripts/app.js" type="text/javascript"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Custom styles for this template-->
+    <link href="/stylesheets/common.css" rel="stylesheet">
+    <!-- Include your custom css file here if you're making one -->
+  </head>
+
+  <body>
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <span class="navbar-brand center">CIS550 Project</span>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link active" href="/homevalues">Home Values</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- All metros Content -->
+    <div class="container user-container" ng-controller="homeValuesController">
+      <div class="jumbotron">
+        <div class="h5">All U.S. Metros and their IDs</div>
+        <!-- Display the users -->
+        <table class="table">
+          <tr> <th>#</th> <th>Metro name</th> <th>Metro ID</th> </tr>
+          <tr ng-repeat = "metro in metroList">
+            <th>{{metro[0]}}</th>
+            <th>{{metro[1]}}</th>
+            <th>{{metro[2]}}</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sample Content. You can either use this or make your own -->
+    <div class="container user-container" ng-controller="homeValuesSearchController1">
+      <div class="jumbotron">
+        <label>Metro 1:</label><br>
+        <input type="text" class="input metroID1" placeholder="ID of metro1" ng-model="metroID1" /> <br>
+        <input type="radio" name="p_type1" value="1bedroom" ng-model="p_type1"> 1 bedroom<br>
+        <input type="radio" name="p_type1" value="2bedroom" ng-model="p_type1"> 2 bedrooms<br>
+        <input type="radio" name="p_type1" value="3bedroom" ng-model="p_type1"> 3 bedrooms<br>
+        <input type="radio" name="p_type1" value="4bedroom" ng-model="p_type1"> 4 bedrooms<br>
+        <input type="radio" name="p_type1" value="condo" ng-model="p_type1"> condo<br>
+        <input type="radio" name="p_type1" value="singlefamily" ng-model="p_type1"> single family home<br>
+        <!-- <button type="button" class="rec-button" name="findId" ng-click="getPrices(metroID1, p_type1)">Find</button> -->
+    </div>
+    
+
+      <div class="jumbotron">
+        <label>Metro 2:</label><br>
+        <input type="text" class="input metroID2" placeholder="ID of metro2" ng-model="metroID2" /> <br>
+        <input type="radio" name="p_type2" value="1bedroom" ng-model="p_type2"> 1 bedroom<br>
+        <input type="radio" name="p_type2" value="2bedroom" ng-model="p_type2"> 2 bedrooms<br>
+        <input type="radio" name="p_type2" value="3bedroom" ng-model="p_type2"> 3 bedrooms<br>
+        <input type="radio" name="p_type2" value="4bedroom" ng-model="p_type2"> 4 bedrooms<br>
+        <input type="radio" name="p_type2" value="condo" ng-model="p_type2"> condo<br>
+        <input type="radio" name="p_type2" value="singlefamily" ng-model="p_type2"> single family home<br>
+        
+      
+      <!-- <input type="submit" class="button_bottom" value="Back" onclick="window.location='/dashboard';"> -->
+      </div>
+    <button type="button" class="rec-button" name="findId" ng-click="getPrices(metroID1, p_type1, metroID2, p_type2)">Plot!</button>
+
+    </div>
+
+      <!-- <div id="plot" style="width:600px;height:250px;"></div> -->
+      <div id="plot" class="center_plt" style="width:600px;height:500px;"></div>
+<!--       <script>
+  
+</script> -->
+    
+
+
+
+    <!-- Include these before the end of body tag in every HTML file -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+
+</html>
