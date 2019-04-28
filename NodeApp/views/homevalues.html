@@ -24,6 +24,9 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <a class="nav-item nav-link active" href="/homevalues">Home Values</a>
+          <a class="nav-item nav-link" href="/homevalues">Rental Prices</a>
+          <a class="nav-item nav-link" href="/homevalues">Rental vs. Sale Prices</a>
+          <a class="nav-item nav-link" href="/homevalues">Rental vs. Price-to-Rent ratio</a>
         </div>
       </div>
     </nav>
@@ -33,9 +36,26 @@
       <div class="jumbotron">
         <div class="h5">All U.S. Metros and their IDs</div>
         <!-- Display the users -->
-        <table class="table">
+        <table class="table" id="metro_table">
           <tr> <th>#</th> <th>Metro name</th> <th>Metro ID</th> </tr>
-          <tr ng-repeat = "metro in metroList">
+          <tr ng-repeat = "metro in dynamic(cursor) track by $index">
+            <th>{{metro[0]}}</th>
+            <th>{{metro[1]}}</th>
+            <th>{{metro[2]}}</th>
+          </tr>
+        </table>
+        <button type="button" class="rec-button" name="prev" ng-click="prev()">Prev</button>
+        <button type="button" class="rec-button" name="next" ng-click="next()">Next</button>
+      </div>
+    </div>
+
+    <div class="container user-container" ng-controller="homeValuesIdSearchController">
+      <div class="jumbotron">
+        <input type="text" class="input metroName" placeholder="(partial) name of metro" ng-model="metroName" />
+        <button type="button" class="rec-button" name="findMetroId" ng-click="getMetroId(metroName)">Get Metro ID</button>
+        <table class="table" id="metro_ids">
+          <tr> <th>#</th> <th>Metro name</th> <th>Metro ID</th> </tr>
+          <tr ng-repeat = "metro in metroIds">
             <th>{{metro[0]}}</th>
             <th>{{metro[1]}}</th>
             <th>{{metro[2]}}</th>
@@ -45,12 +65,12 @@
     </div>
 
     <!-- Sample Content. You can either use this or make your own -->
-    <div class="container user-container" ng-controller="homeValuesSearchController1">
+    <div class="container user-container" ng-controller="homeValuesSearchController">
       <div class="jumbotron">
         <label>Metro 1:</label><br>
         <input type="text" class="input metroID1" placeholder="ID of metro1" ng-model="metroID1" /> <br>
-        <input type="radio" name="p_type1" value="1bedroom" ng-model="p_type1"> 1 bedroom<br>
-        <input type="radio" name="p_type1" value="2bedroom" ng-model="p_type1"> 2 bedrooms<br>
+        <input type="radio" name="p_type1" value="1bedroom" ng-model="p_type1" > 1 bedroom<br>
+        <input type="radio" name="p_type1" value="2bedroom" ng-model="p_type1" > 2 bedrooms<br>
         <input type="radio" name="p_type1" value="3bedroom" ng-model="p_type1"> 3 bedrooms<br>
         <input type="radio" name="p_type1" value="4bedroom" ng-model="p_type1"> 4 bedrooms<br>
         <input type="radio" name="p_type1" value="condo" ng-model="p_type1"> condo<br>

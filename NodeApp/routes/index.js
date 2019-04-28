@@ -75,12 +75,14 @@ router.get('/routeName', function(req, res) {
 });
 */
 
-router.get('/homevalues/metros', function(req, res) {
+router.post('/homevalues/metros', function(req, res) {
   // use console.log() as print() in case you want to debug, example below:
   // console.log(req.body); will show the print result in your terminal
 
   // req.body contains the json data sent from the loginController
   // e.g. to get username, use req.body.username
+  var current_cursor = req.body.current_cursor;
+  console.log(current_cursor);
   var query = "SELECT ROWNUM, a.* from (select distinct name, id from metro order by name) a";
   /* Write your query here and uncomment line 21 in javascripts/app.js*/
 
@@ -101,7 +103,6 @@ router.get('/homevalues/metros', function(req, res) {
       function(err, result)
       {
         if (err) { console.error(err); return; }
-        //console.log(result);
         res.send(result);
       });
   });
@@ -118,7 +119,6 @@ router.post('/homevalues/metroprices', function(req, res) {
 
   var query = "SELECT hv.time_stamp, hv.price FROM homevalue hv WHERE hv.metro_id = "+ metroID +" and hv.property_type = '"+p_type+"' ORDER BY hv.time_stamp";
 
-  var rs = {};
   oracledb.getConnection(
   {
     user          : "cis550project",
@@ -137,38 +137,39 @@ router.post('/homevalues/metroprices', function(req, res) {
       {
         if (err) { console.error(err); return; }
         //console.log(result);
-        rs.fst = result;
         res.send(result);
       });
   });
+});
 
-  // var query2 = "SELECT hv.time_stamp, hv.price FROM homevalue hv WHERE hv.metro_id = "+ metroID2 +" and hv.property_type = '"+p_type2+"' ORDER BY hv.time_stamp";
+router.post('/homevalues/metroId', function(req, res) {
+  var name = req.body.name;
 
+  var query = "SELECT ROWNUM, a.* from (SELECT name, id FROM METRO WHERE name like '%"+name+"%') a";
 
-  // oracledb.getConnection(
-  // {
-  //   user          : "cis550project",
-  //   password      : "cis550project!",
-  //   connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
-  // },
-  //   function(err, connection)
-  // {
-  //   if (err) {
-  //     console.log(err);
-  //   } 
-  //   console.log("Connection established...");
-  //     connection.execute(
-  //     query,
-  //     function(err, result)
-  //     {
-  //       if (err) { console.error(err); return; }
-  //       //console.log(result);
-  //       rs.snd = result;
-  //       //res.send(result);
-  //     });
-  // });
+  console.log(query);
 
-  // res.send(rs);
+  oracledb.getConnection(
+  {
+    user          : "cis550project",
+    password      : "cis550project!",
+    connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+  },
+    function(err, connection)
+  {
+    if (err) {
+      console.log(err);
+    } 
+    console.log("Connection established...");
+      connection.execute(
+      query,
+      function(err, result)
+      {
+        if (err) { console.error(err); return; }
+        //console.log(result);
+        res.send(result);
+      });
+  });
 
 });
 

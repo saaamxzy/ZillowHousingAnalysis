@@ -52,16 +52,46 @@ app.controller('dashUserController', function($scope, $http) {
 
 });
 
+
+var current_cursor = 0;
 // Controller for homevalues page
 app.controller('homeValuesController', function($scope, $http) {
   // normal variables
-  // var dummyVar1 = 'abc';
 
-  // // Angular scope variables
-  // $scope.dummyVar2 = 'abc';
-  // $scope.userList = [ { username: 'abc'}];
+  $scope.cursor = 0;
+  $scope.next = function() {
+    if ($scope.cursor <= 920) {$scope.cursor += 10; }
+  };
 
-  var req = $http.get('/homevalues/metros');
+  $scope.prev = function() {
+    if ($scope.cursor >= 10) { $scope.cursor -= 10; }
+    
+  };
+  
+  
+  $scope.dynamic = function(cursor) {
+    //return $scope.metroList.slice(cursor, cursor+10);
+    if ($scope.metroList) {
+      var rs = [];
+
+      for (var i = cursor; i < cursor+10; i++) {
+        if ($scope.metroList[i]) {
+          rs.push($scope.metroList[i]);
+        }
+      }
+      return rs;
+    }
+  }
+
+
+
+  var req = $http({
+      url: '/homevalues/metros', //+ movieId,
+      method: "POST",
+      data: {
+        'current_cursor' : current_cursor
+      }
+    });
 
   req.success(function(data) {
     console.log('success in finding all metros.');
@@ -75,11 +105,12 @@ app.controller('homeValuesController', function($scope, $http) {
 
 });
 
-app.controller('homeValuesSearchController1', function($scope, $http) {
+app.controller('homeValuesSearchController', function($scope, $http) {
   // normal variables
   // var dummyVar1 = 'abc';
 
   $scope.getPrices = function(metroID1, p_type1, metroID2, p_type2) {
+
 
     var request = $http({
       url: '/homevalues/metroprices', //+ movieId,
@@ -100,6 +131,7 @@ app.controller('homeValuesSearchController1', function($scope, $http) {
       };
       $scope.x1 = response.rows.map(getFirst);
       $scope.y1 = response.rows.map(getSecond);
+      console.log('metro 1 finished.');
       //var x = $scope.x1;
 
       
@@ -129,8 +161,9 @@ app.controller('homeValuesSearchController1', function($scope, $http) {
       $scope.x2 = response.rows.map(getFirst);
       $scope.y2 = response.rows.map(getSecond);
       
-      console.log($scope.y1);
-      console.log($scope.y2);
+      // console.log($scope.y1);
+      // console.log($scope.y2);
+      console.log('metro 2 finished.');
 
       var x1 = $scope.x1;
       var x2 = $scope.x2;
@@ -167,94 +200,27 @@ app.controller('homeValuesSearchController1', function($scope, $http) {
 
   };
 
-
-
-
-
-
-
 });
 
-app.controller('homeValuesSearchController2', function($scope, $http) {
-  // normal variables
-  // var dummyVar1 = 'abc';
-
-  $scope.getPrices = function(metroID2, p_type2) {
-
+app.controller('homeValuesIdSearchController', function($scope, $http) {
+  $scope.getMetroId = function(name) {
     var request = $http({
-      url: '/homevalues/metroprices', //+ movieId,
+      url: '/homevalues/metroId', 
       method: "POST",
       data: {
-        'metroID2' : metroID2,
-        'p_type2' : p_type2
+        'name' : name
       }
     });
 
     request.success(function(response) {
-      //console.log(response.rows);
-      function getFirst(e) {
-        return e[0];
-      };
-      function getSecond(e) {
-        return e[1];
-      };
-      $scope.x2 = response.rows.map(getFirst);
-      $scope.y2 = response.rows.map(getSecond);
-      var x = $scope.x2;
-      var y = $scope.y2;
-
-      // p = document.getElementById('plot');
-      // var trace1 = {
-      //   x, y, 
-      //   name: 'metro1',
-      //   type: 'scatter'
-      // };
-      // // var trace2 = {
-      // //   x, y
-      // // };
-      // var data = [trace1];
-      // var layout = { showlegend: true,
-      //   legend: {x:1, y:1}
-      // };
-      // Plotly.newPlot(p, data, layout);
-      
-      // Plotly.plot( p, [{ x, y }], {
-      //   margin: { t: 2 } 
-      // });
-      //$scope.time_stamps = response;
+      $scope.metroIds = response.rows;
     });
 
     request.error(function(err) {
       console.log("error: ", err);
     });
-  }
-
-});
-
-app.controller('homeValuesPlotController', function($scope, $http) {
-
-  $scope.getPlot = function() {
-    console.log($scope.x1);
   };
-
-  // p = document.getElementById('plot');
-  //     var trace1 = {
-  //       x, y, 
-  //       name: 'metro1',
-  //       type: 'scatter'
-  //     };
-  //     // var trace2 = {
-  //     //   x, y
-  //     // };
-  //     var data = [trace1];
-  //     var layout = { showlegend: true,
-  //       legend: {x:1, y:1}
-  //     };
-  //     Plotly.newPlot(p, data, layout);
-      
-
 });
-
 
 
 // Controller for top movies on dashboard page
