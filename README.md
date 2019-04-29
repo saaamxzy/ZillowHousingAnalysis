@@ -22,7 +22,8 @@ count and sale to list ratio.
 Refer to [here](./milestone2/Milestone2.pdf)
 
 ## Requirements for developers
-
+- npm install 
+- npm install oracledb
 ### Node-Oracle.js
 Please Add Oracle 18, 12, or 11.2 client libraries to your operating system library search path such as
 `PATH` on Windows or LD_LIBRARY_PATH on Linux. On macOS move the libraries to `~/lib` or `/usr/local/lib`. 
@@ -35,4 +36,4 @@ Other dependencies are settled within the html file headers.
 
 - Database used: oracle db
 - NoSQL used: not yet
-- Server: Amazon Web Services (AWS)
+- Server: Amazon Web Services (AWS) RDS
