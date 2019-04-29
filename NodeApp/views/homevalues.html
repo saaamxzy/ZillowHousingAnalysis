@@ -69,7 +69,7 @@
       <div class="jumbotron">
         <label>Metro 1:</label><br>
         <input type="text" class="input metroID1" placeholder="ID of metro1" ng-model="metroID1" /> <br>
-        <input type="radio" name="p_type1" value="1bedroom" ng-model="p_type1" > 1 bedroom<br>
+        <input type="radio" name="p_type1" value="1bedroom" ng-checked="true" ng-model="p_type1" > 1 bedroom<br>
         <input type="radio" name="p_type1" value="2bedroom" ng-model="p_type1" > 2 bedrooms<br>
         <input type="radio" name="p_type1" value="3bedroom" ng-model="p_type1"> 3 bedrooms<br>
         <input type="radio" name="p_type1" value="4bedroom" ng-model="p_type1"> 4 bedrooms<br>
@@ -82,7 +82,7 @@
       <div class="jumbotron">
         <label>Metro 2:</label><br>
         <input type="text" class="input metroID2" placeholder="ID of metro2" ng-model="metroID2" /> <br>
-        <input type="radio" name="p_type2" value="1bedroom" ng-model="p_type2"> 1 bedroom<br>
+        <input type="radio" name="p_type2" value="1bedroom" ng-checked="true" ng-model="p_type2"> 1 bedroom<br>
         <input type="radio" name="p_type2" value="2bedroom" ng-model="p_type2"> 2 bedrooms<br>
         <input type="radio" name="p_type2" value="3bedroom" ng-model="p_type2"> 3 bedrooms<br>
         <input type="radio" name="p_type2" value="4bedroom" ng-model="p_type2"> 4 bedrooms<br>
@@ -92,7 +92,10 @@
       
       <!-- <input type="submit" class="button_bottom" value="Back" onclick="window.location='/dashboard';"> -->
       </div>
-    <button type="button" class="rec-button" name="findId" ng-click="getPrices(metroID1, p_type1, metroID2, p_type2)">Plot!</button>
+      <center>
+        <button type="button" class="button_bottom" name="findId" ng-click="getPrices(metroID1, p_type1, metroID2, p_type2)"><span>Plot</span></button>
+      </center>
+    
 
     </div>
 

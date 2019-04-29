@@ -64,6 +64,10 @@ var oracledb = require('oracledb');
 //   res.sendFile(path.join(__dirname, '../', 'views', 'bestof.html'))
 // })
 
+/* GET home page. */
+router.get('/', function(req, res) {
+   res.sendFile(path.join(__dirname, '../', 'views', 'homevalues.html'));
+});
 router.get('/homevalues', function(req, res) {
   res.sendFile(path.join(__dirname, '../', 'views', 'homevalues.html'))
 })
@@ -117,7 +121,8 @@ router.post('/homevalues/metroprices', function(req, res) {
   // var p_type2 = req.body.p_type2;
   
 
-  var query = "SELECT hv.time_stamp, hv.price FROM homevalue hv WHERE hv.metro_id = "+ metroID +" and hv.property_type = '"+p_type+"' ORDER BY hv.time_stamp";
+  var query = "SELECT hv.time_stamp, hv.price FROM homevalue hv WHERE hv.metro_id = "+ metroID 
+              +" and hv.property_type = '"+p_type+"' ORDER BY hv.time_stamp";
 
   oracledb.getConnection(
   {
