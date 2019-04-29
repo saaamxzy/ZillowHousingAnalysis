@@ -71,6 +71,9 @@ router.get('/', function(req, res) {
 router.get('/homevalues', function(req, res) {
   res.sendFile(path.join(__dirname, '../', 'views', 'homevalues.html'))
 })
+router.get('/rentalprices', function(req, res) {
+  res.sendFile(path.join(__dirname, '../', 'views', 'rentalprices.html'))
+})
 
 // To add a new page, use the templete below
 /*
@@ -176,6 +179,43 @@ router.post('/homevalues/metroId', function(req, res) {
       });
   });
 
+});
+
+/**
+ * Search for rental prices
+ */
+router.post('/rentalprices/metroprices', function(req, res) {
+
+  var metroID = req.body.metroID;
+  var p_type = req.body.p_type;
+  // var metroID2 = req.body.metroID2;
+  // var p_type2 = req.body.p_type2;
+  
+
+  var query = "SELECT time_stamp, price FROM rentalprice WHERE metro_id = "+ metroID 
+              +" and property_type = '"+p_type+"' ORDER BY time_stamp";
+
+  oracledb.getConnection(
+  {
+    user          : "cis550project",
+    password      : "cis550project!",
+    connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+  },
+    function(err, connection)
+  {
+    if (err) {
+      console.log(err);
+    } 
+    console.log("Connection established...");
+      connection.execute(
+      query,
+      function(err, result)
+      {
+        if (err) { console.error(err); return; }
+        //console.log(result);
+        res.send(result);
+      });
+  });
 });
 
 // router.get('/recommendation/recMovies/:movieId', function(req, res) {
