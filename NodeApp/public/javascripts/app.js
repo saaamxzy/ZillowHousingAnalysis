@@ -111,7 +111,49 @@ app.controller('homeValuesSearchController', function($scope, $http) {
 
   $scope.getPrices = function(metroID1, p_type1, metroID2, p_type2) {
 
+    if (!metroID2){
+      var request = $http({
+        url: '/homevalues/metroprices', //+ movieId,
+        method: "POST",
+        data: {
+          'metroID' : metroID1,
+          'p_type' : p_type1
+        }
+      }); 
+      request.success(function(response) {
+        //console.log(response.rows);
+        function getFirst(e) {
+          return e[0];
+        };
+        function getSecond(e) {
+          return e[1];
+        };
+        $scope.x1 = response.rows.map(getFirst);
+        $scope.y1 = response.rows.map(getSecond);
+        console.log('metro 1 finished.');
+      });
+        
+      request.error(function(err) {
+        console.log("error: ", err);
+      });
 
+      var x1 = $scope.x1;
+      var y1 = $scope.y1;
+      p = document.getElementById('plot');
+      var trace = {
+        x:x1, y:y1, 
+        name: 'metro1',
+        type: 'scatter'
+      };
+      // var trace2 = {
+      //   x, y
+      // };
+      var data = [trace];
+      var layout = { showlegend: true,
+        legend: {x:1, y:1}
+      };
+      Plotly.newPlot(p, data);
+    }
     var request = $http({
       url: '/homevalues/metroprices', //+ movieId,
       method: "POST",
@@ -231,7 +273,49 @@ app.controller('rentalPricesSearchController', function($scope, $http) {
 
   $scope.getPrices = function(metroID1, p_type1, metroID2, p_type2) {
 
+    if (!metroID2){
+      var request = $http({
+        url: '/rentalprices/metroprices', //+ movieId,
+        method: "POST",
+        data: {
+          'metroID' : metroID1,
+          'p_type' : p_type1
+        }
+      });
+      request.success(function(response) {
+        //console.log(response.rows);
+        function getFirst(e) {
+          return e[0];
+        };
+        function getSecond(e) {
+          return e[1];
+        };
+        $scope.x1 = response.rows.map(getFirst);
+        $scope.y1 = response.rows.map(getSecond);
+        console.log('metro 1 finished.');
+        //var x = $scope.x1;
+      });
 
+      request.error(function(err) {
+        console.log("error: ", err);
+      });
+
+      var x1 = $scope.x1;
+      var y1 = $scope.y1;
+      p = document.getElementById('plot');
+
+      var trace1 = {
+        x:x1, y:y1, 
+        name: 'metro1',
+        type: 'scatter'
+      };
+      
+      var data = [trace1];
+      var layout = { showlegend: true,
+        legend: {x:1, y:1}
+      };
+      Plotly.newPlot(p, data);
+    }
     var request = $http({
       url: '/rentalprices/metroprices', //+ movieId,
       method: "POST",

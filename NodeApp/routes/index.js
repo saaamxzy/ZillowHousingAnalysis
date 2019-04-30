@@ -152,8 +152,14 @@ router.post('/homevalues/metroprices', function(req, res) {
 
 router.post('/homevalues/metroId', function(req, res) {
   var name = req.body.name;
-
-  var query = "SELECT ROWNUM, a.* from (SELECT name, id FROM METRO WHERE name like '%"+name+"%') a";
+  var query;
+  if (name.length > 2) {
+    name = name.toLowerCase();
+    query = "SELECT ROWNUM, a.* from (SELECT name, id FROM METRO WHERE LOWER(name) like '%"+name+"%') a";
+  }
+  else{
+    query = "SELECT ROWNUM, a.* from (SELECT name, id FROM METRO WHERE name like '%"+name+"%') a";
+  }
 
   console.log(query);
 
