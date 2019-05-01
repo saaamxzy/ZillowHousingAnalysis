@@ -23,10 +23,10 @@
       <span class="navbar-brand center">CIS550 Project</span>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <a class="nav-item nav-link active" href="/homevalues">Home Values</a>
+          <a class="nav-item nav-link" href="/homevalues">Home Values</a>
           <a class="nav-item nav-link" href="/rentalprices">Rental Prices</a>
           <a class="nav-item nav-link" href="/homevalues">Rental vs. Sale Prices</a>
-          <a class="nav-item nav-link" href="/generalquery">Rental vs. Price-to-Rent ratio</a>
+          <a class="nav-item nav-link active" href="/generalquery">Rental vs. Price-to-Rent ratio</a>
         </div>
       </div>
     </nav>
@@ -65,49 +65,20 @@
     </div>
 
     <!-- Sample Content. You can either use this or make your own -->
-    <div class="container user-container" ng-controller="homeValuesSearchController">
+    <div class="container user-container" ng-controller="sqlControllerOne">
       <div class="jumbotron">
-        <label>Metro 1:</label><br>
-        <input type="text" class="input metroID1" placeholder="ID of metro1" ng-model="metroID1" /> <br>
-        <input type="radio" name="p_type1" value="1bedroom" ng-checked="true" ng-model="p_type1" > 1 bedroom<br>
-        <input type="radio" name="p_type1" value="2bedroom" ng-model="p_type1" > 2 bedrooms<br>
-        <input type="radio" name="p_type1" value="3bedroom" ng-model="p_type1"> 3 bedrooms<br>
-        <input type="radio" name="p_type1" value="4bedroom" ng-model="p_type1"> 4 bedrooms<br>
-        <input type="radio" name="p_type1" value="condo" ng-model="p_type1"> condo<br>
-        <input type="radio" name="p_type1" value="singlefamily" ng-model="p_type1"> single family home<br>
-        <!-- <button type="button" class="rec-button" name="findId" ng-click="getPrices(metroID1, p_type1)">Find</button> -->
+        <label>arg 1:</label>
+        <input type="text" class="input metroID1" placeholder="arg 1" ng-model="arg1" /> <br>
+        <label>arg 2:</label>
+        <input type="text" class="input metroID1" placeholder="arg 2" ng-model="arg2" /> <br>
       </div>
     
-
-      <div class="jumbotron">
-        <label>Metro 2:</label><br>
-        <input type="text" class="input metroID2" placeholder="ID of metro2" ng-model="metroID2" /> <br>
-        <input type="radio" name="p_type2" value="1bedroom" ng-checked="true" ng-model="p_type2"> 1 bedroom<br>
-        <input type="radio" name="p_type2" value="2bedroom" ng-model="p_type2"> 2 bedrooms<br>
-        <input type="radio" name="p_type2" value="3bedroom" ng-model="p_type2"> 3 bedrooms<br>
-        <input type="radio" name="p_type2" value="4bedroom" ng-model="p_type2"> 4 bedrooms<br>
-        <input type="radio" name="p_type2" value="condo" ng-model="p_type2"> condo<br>
-        <input type="radio" name="p_type2" value="singlefamily" ng-model="p_type2"> single family home<br>
-        
-      
-      <!-- <input type="submit" class="button_bottom" value="Back" onclick="window.location='/dashboard';"> -->
-      </div>
       <center>
-        <button type="button" class="button_bottom" name="findId" ng-click="getPrices(metroID1, p_type1, metroID2, p_type2)"><span>Plot</span></button>
+        <button type="button" class="button_bottom" name="findId" ng-click="queryOne()"><span>Plot</span></button>
       </center>
-    
-
     </div>
-
-    <!-- <div id="plot" style="width:600px;height:250px;"></div> -->
     <div id="plot" class="center_plt" style="width:600px;height:500px;"></div>
-<!--       <script>
-  
-</script> -->
     
-
-
-
     <!-- Include these before the end of body tag in every HTML file -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
