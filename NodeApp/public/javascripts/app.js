@@ -241,6 +241,7 @@ app.controller('homeValuesIdSearchController', function($scope, $http) {
 
 /**
  * Rental Price Search Controller
+ * @auther: Zhiyuan Li
  */
 app.controller('rentalPricesSearchController', function($scope, $http) {
   // normal variables
@@ -383,6 +384,7 @@ app.controller('rentalPricesSearchController', function($scope, $http) {
 
 /**
  * for /generalquery
+ * @auther: Zhiyuan Li
  */
 app.controller('sqlControllerOne', function($scope, $http) {
   console.log($scope.arg1, $scope.arg2)
@@ -400,6 +402,109 @@ app.controller('sqlControllerOne', function($scope, $http) {
       console.log(response);
     });
   
+    req.error(function(err) {
+      console.log("error: ", err);
+    });
+  }
+});
+
+/**
+ * for /busyseason
+ * @auther: Zhiyuan Li
+ */
+app.controller('busySeasonController', function($scope, $http) {
+  /**
+   * get busy season
+   */
+  $scope.getBusySeason = function(){
+    var req = $http({
+      url: '/busyseason/getbusyseason',
+      method: "GET"
+    });
+    req.success(function(response) {
+      console.log(response);
+      // $scope.busySeasonTable = response.rows;
+      function getFirst(e) {
+        return e[0];
+      };
+      function getSecond(e) {
+        return e[1];
+      };
+      function getThird(e){
+        return e[2];
+      };
+      $scope.state = response.rows.map(getFirst);
+      $scope.busyMonth = response.rows.map(getSecond);
+      $scope.weight = response.rows.map(getThird);
+      var x0 = $scope.state;
+      var y1 = $scope.busyMonth;
+      var y2 = $scope.weight;
+      p = document.getElementById('plot');
+      var trace1 = {
+        x:x0, y:y1, 
+        name: 'busiest month',
+        type: 'scatter'
+      };
+      var trace2 = {
+        x:x0, y:y2, 
+        name: 'weight',
+        type: 'scatter'
+      };
+      var data = [trace1, trace2];
+      var layout = { 
+        showlegend: true,
+        legend: {x:1, y:1}
+      };
+      Plotly.newPlot(p, data);
+    });
+    req.error(function(err) {
+      console.log("error: ", err);
+    });
+  }
+  /** 
+   * get busy season reason: MHI
+   */ 
+  $scope.getBusySeasonReasonMHI = function(){
+    var req = $http({
+      url: '/busyseason/getBusySeasonReasonMHI',
+      method: "GET"
+    });
+    req.success(function(response) {
+      console.log(response);
+      $scope.busySeasonReasonMHITable = response.rows;
+    });
+    req.error(function(err) {
+      console.log("error: ", err);
+    });
+  }
+  /** 
+   * get busy season reason: Rental
+   */ 
+  $scope.getBusySeasonReasonRental = function(){
+    var req = $http({
+      url: '/busyseason/getBusySeasonReasonRental',
+      method: "GET"
+    });
+    req.success(function(response) {
+      console.log(response);
+      $scope.busySeasonReasonRentalTable = response.rows;
+    });
+    req.error(function(err) {
+      console.log("error: ", err);
+    });
+  }
+  /** 
+   * get busy season reason: Homevalue
+   */ 
+  $scope.getBusySeasonReasonHomevalue = function(){
+    var req = $http({
+      url: '/busyseason/getBusySeasonReasonHomevalue',
+      method: "GET"
+    });
+    req.success(function(response) {
+      console.log(response);
+      $scope.busySeasonReasonHomevalueTable = response.rows;
+    });
     req.error(function(err) {
       console.log("error: ", err);
     });

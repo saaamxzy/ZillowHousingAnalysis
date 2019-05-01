@@ -44,27 +44,6 @@ var oracledb = require('oracledb');
 //   });
 
 /* GET home page. */
-// router.get('/', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../', 'views', 'login.html'));
-// });
-
-// router.get('/dashboard', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../', 'views', 'dashboard.html'));
-// });
-
-// router.get('/reference', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../', 'views', 'reference.html'));
-// });
-
-// router.get('/recommendation', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../', 'views', 'recommendation.html'))
-// });
-
-// router.get('/bestof', function(req, res) {
-//   res.sendFile(path.join(__dirname, '../', 'views', 'bestof.html'))
-// })
-
-/* GET home page. */
 router.get('/', function(req, res) {
    res.sendFile(path.join(__dirname, '../', 'views', 'homevalues.html'));
 });
@@ -76,6 +55,9 @@ router.get('/rentalprices', function(req, res) {
 })
 router.get('/generalquery', function(req, res) {
   res.sendFile(path.join(__dirname, '../', 'views', 'generalquery.html'))
+})
+router.get('/busyseason', function(req, res) {
+  res.sendFile(path.join(__dirname, '../', 'views', 'busyseason.html'))
 })
 // To add a new page, use the templete below
 /*
@@ -191,6 +173,7 @@ router.post('/homevalues/metroId', function(req, res) {
 
 /**
  * Search for rental prices
+ * @auther: Zhiyuan Li
  */
 router.post('/rentalprices/metroprices', function(req, res) {
 
@@ -228,6 +211,7 @@ router.post('/rentalprices/metroprices', function(req, res) {
 
 /**
  * Trial: Search for rental prices
+ * @auther: Zhiyuan Li
  */
 // router.get('/rentalprices/metropricesTrial', function(request, response) {
 //   var query1 = "...";
@@ -275,6 +259,167 @@ router.post('/generalquery/queryOne', function(req, res){
             'status': 'success',
             'count' : result
           });
+        });
+    });
+});
+
+/**
+ * get busy season
+ * (state, month, adjusted_sales_over_poplution)
+ * @auther: Zhiyuan Li
+ */
+router.get('/busyseason/getbusyseason', function(req, res) {
+  // var query = "WITH temp AS(select avg(income) as avg_income from mhi) select metro_id, time_stamp, income from mhi, temp where mhi.income > temp.avg_income"
+  var query = "WITH result AS( " + "\n" +
+              "SELECT state_code, month, SUM(weight) AS weight " + 
+              "FROM METRO INNER JOIN " + 
+              "(SELECT sales.metro_id, SUBSTR(time_stamp,6,2) AS month, AVG(num_sales/population) AS weight FROM " + "\n" +
+              "(SELECT m.state_code, s.metro_id, s.time_stamp, s.num_sales " + "\n" +
+              "FROM METRO m INNER JOIN SALESCOUNT s " + "\n" +
+              "ON m.id=s.metro_id) sales  " + "\n" +
+              "INNER JOIN POPULATION pop " + "\n" +
+              "ON sales.state_code= pop.state_code AND SUBSTR(time_stamp,1,4)=pop.year " + "\n" +
+              "GROUP BY sales.metro_id, SUBSTR(time_stamp,6,2) ) METROSALES " + "\n" +
+              "ON METRO.id=METROSALES.metro_id " + "\n" +
+              "GROUP BY state_code, month " + "\n" +
+              ") " + "\n" +
+              "SELECT DISTINCT state_code, month, ROUND(1000*weight,2) AS per_sales " + "\n" +
+              "FROM result WHERE (state_code, weight) " + "\n" +
+              "IN (SELECT state_code, MAX(weight) FROM result GROUP BY state_code) " + "\n" +
+              "ORDER by month";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
+        });
+    });
+});
+
+/**
+ * get busy season reason: MHI, i.e. Median Household Income
+ * (month, avg_income)
+ * @auther: Zhiyuan Li
+ */
+router.get('/busyseason/getBusySeasonReasonMHI', function(req, res) {
+  var query = "SELECT substr(time_stamp,6,2) AS month, round(avg(income)) AS avg_income " + "\n" +
+              "FROM MHI " + "\n" +
+              "WHERE CAST(substr(time_stamp,1,4) AS INT)>=2000 " + "\n" +
+              "GROUP BY substr(time_stamp,6,2) " + "\n" +
+              "ORDER BY substr(time_stamp,6,2) ";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
+        });
+    });
+});
+
+/**
+ * get busy season reason: Rental
+ * (month, rental_price_rank, ptr_rank)
+ * @auther: Zhiyuan Li
+ */
+router.get('/busyseason/getBusySeasonReasonRental', function(req, res) {
+  var query = "SELECT t1.month, t1.rental_price_rank, t2.ptr_rank FROM " + "\n" +
+              "( " + "\n" +
+              "SELECT month, rownum AS rental_price_rank " + "\n" +
+              "FROM " + "\n" +
+              "(SELECT substr(time_stamp,6,2) AS month, avg(price) " + "\n" +
+              "FROM RENTALPRICE " + "\n" +
+              "WHERE CAST(substr(time_stamp,1,4) AS INT)>=2000 " + "\n" +
+              "GROUP BY substr(time_stamp,6,2) " + "\n" +
+              "ORDER BY avg(price) DESC) rentalPriceRank " + "\n" +
+              ") t1 " + "\n" +
+              "INNER JOIN " + "\n" +
+              "( " + "\n" +
+              "SELECT month, rownum AS ptr_rank " + "\n" +
+              "FROM " + "\n" +
+              "(SELECT substr(time_stamp,6,2) AS month, avg(ptr) AS avg_ptr " + "\n" +
+              "FROM PTR " + "\n" +
+              "WHERE CAST(substr(time_stamp,1,4) AS INT)>=2000 " + "\n" +
+              "GROUP BY substr(time_stamp,6,2) " + "\n" +
+              "ORDER BY avg(ptr)) ptrRank " + "\n" +
+              ") t2 " + "\n" +
+              "ON t1.month = t2.month " + "\n" +
+              "ORDER BY t1.month";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
+        });
+    });
+});
+
+/**
+ * get busy season reason: Homevalue
+ * (month, avg_home_price, avg_stl, avg_home_sale_price)
+ * @auther: Zhiyuan Li
+ */
+router.get('/busyseason/getBusySeasonReasonHomevalue', function(req, res) {
+  var query = "SELECT t1.month, avg_home_price, ROUND(avg_stl,4) AS avg_stl, round(avg_home_price * avg_stl, 2) AS avg_home_sale_price FROM " + "\n" +
+              "( " + "\n" +
+              "SELECT substr(time_stamp,6,2) AS month, round(avg(price),2) AS avg_home_price " + "\n" +
+              "FROM HOMEVALUE " + "\n" +
+              "WHERE CAST(substr(time_stamp,1,4) AS INT)>=2000 " + "\n" +
+              "GROUP BY substr(time_stamp,6,2) " + "\n" +
+              ") t1 " + "\n" +
+              "INNER JOIN " + "\n" +
+              "( " + "\n" +
+              "SELECT substr(time_stamp,6,2) AS month, avg(stl) AS avg_stl " + "\n" +
+              "FROM STL " + "\n" +
+              "WHERE CAST(substr(time_stamp,1,4) AS INT)>=2000 " + "\n" +
+              "GROUP BY substr(time_stamp,6,2) " + "\n" +
+              ") t2 " + "\n" +
+              "ON t1.month = t2.month " + "\n" +
+              "ORDER BY ROUND(avg_home_price * avg_stl, 2)";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
         });
     });
 });
