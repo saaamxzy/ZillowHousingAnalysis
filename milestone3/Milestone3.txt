@@ -1,0 +1,7 @@
+sqlplus 'cis550project@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP) (HOST=cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com)(PORT=1521)) (CONNECT_DATA=(SID=CIS550DB)))'
+
+DATABASE_NAMENAME:	CIS550DB
+USERNAME:		cis550project
+PASSWORD:		cis550project!
+
+SCHEMA_NAME:		CIS550PROJECT
