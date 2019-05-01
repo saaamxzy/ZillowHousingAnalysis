@@ -447,15 +447,24 @@ app.controller('busySeasonController', function($scope, $http) {
       };
       var trace2 = {
         x:x0, y:y2, 
-        name: 'weight',
+        name: 'adjusted sales over population',
         type: 'scatter'
       };
       var data = [trace1, trace2];
-      var layout = { 
-        showlegend: true,
-        legend: {x:1, y:1}
-      };
-      Plotly.newPlot(p, data);
+      var layout = {legend: {
+        x: 0,
+        y: 1,
+        traceorder: 'normal',
+        font: {
+          family: 'sans-serif',
+          size: 12,
+          color: '#000'
+        },
+        bgcolor: '#E2E2E2',
+        bordercolor: '#FFFFFF',
+        borderwidth: 2
+      }};
+      Plotly.newPlot(p, data, layout);
     });
     req.error(function(err) {
       console.log("error: ", err);

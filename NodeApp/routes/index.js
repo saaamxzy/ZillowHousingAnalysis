@@ -283,10 +283,13 @@ router.get('/busyseason/getbusyseason', function(req, res) {
               "ON METRO.id=METROSALES.metro_id " + "\n" +
               "GROUP BY state_code, month " + "\n" +
               ") " + "\n" +
-              "SELECT DISTINCT state_code, month, ROUND(1000*weight,2) AS per_sales " + "\n" +
+              "SELECT state_name, month, per_sales " + "\n" +
+              "FROM STATE t1 INNER JOIN " + "\n" +
+              "(SELECT DISTINCT state_code, month, ROUND(1000*weight,2) AS per_sales " + "\n" +
               "FROM result WHERE (state_code, weight) " + "\n" +
-              "IN (SELECT state_code, MAX(weight) FROM result GROUP BY state_code) " + "\n" +
-              "ORDER by month";
+              "IN (SELECT state_code, MAX(weight) FROM result GROUP BY state_code)) t2 " + "\n" +
+              "ON t1.state_code=t2.state_code " + "\n" +
+              "ORDER BY month";
   console.log(query);
   oracledb.getConnection(
     {
