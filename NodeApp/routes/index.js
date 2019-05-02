@@ -2,24 +2,6 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 
-// Connect string to MySQL
-// var mysql = require('mysql');
-
-// var connection = mysql.createConnection({
-//   host: 'fling.seas.upenn.edu',
-//   user: 'zhengyx',
-//   password: 'moonlytheMAGE110**',
-//   database: 'zhengyx'
-// });
-
-// connection.connect(function(err) {
-//   if (err) {
-//     console.log("Error Connection to DB" + err);
-//     return;
-//   }
-//   console.log("Connection established...");
-// });
-
 var oracledb = require('oracledb');
 // oracledb.getConnection(
 //   {
@@ -58,6 +40,9 @@ router.get('/generalquery', function(req, res) {
 })
 router.get('/busyseason', function(req, res) {
   res.sendFile(path.join(__dirname, '../', 'views', 'busyseason.html'))
+})
+router.get('/rentalanalysis', function(req, res) {
+  res.sendFile(path.join(__dirname, '../', 'views', 'rentalanalysis.html'))
 })
 // To add a new page, use the templete below
 /*
@@ -132,6 +117,37 @@ router.post('/homevalues/metroprices', function(req, res) {
         res.send(result);
       });
   });
+});
+
+router.post('/homevalues/choropleth', function(req, res) {
+  var year = req.body.year;
+
+  var query = "SELECT avg(price) as price, m.state_code from homevalue hv join metro m on m.id " +
+  "= hv.metro_id where substr (hv.time_stamp, 1,4) = "+year+" group by m.state_code";
+
+  console.log(query);
+  oracledb.getConnection(
+  {
+    user          : "cis550project",
+    password      : "cis550project!",
+    connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+  },
+    function(err, connection)
+  {
+    if (err) {
+      console.log(err);
+    } 
+    console.log("Connection established...");
+      connection.execute(
+      query,
+      function(err, result)
+      {
+        if (err) { console.error(err); return; }
+        //console.log(result);
+        res.send(result);
+      });
+  });
+
 });
 
 router.post('/homevalues/metroId', function(req, res) {
@@ -210,31 +226,24 @@ router.post('/rentalprices/metroprices', function(req, res) {
 });
 
 /**
- * Trial: Search for rental prices
- * @auther: Zhiyuan Li
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+ * 
+ * /generalquery below
+ * 
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
  */
-// router.get('/rentalprices/metropricesTrial', function(request, response) {
-//   var query1 = "...";
-//   connection.query(query1, function(err, res) {
-//     if (err)
-//       response.send({err: err});
-//     // do some fitting here for the res. e.g. convert it into string for IN clause (stored in tempRes variable)
-//     var query2 = "SELECT * from Movies where title IN ("+ tempRes +");"
-//     connection.query(query2, function(err, res) {
-//       if (err)
-//         response.send({err: err});
-//       response.json(res);
-//     });
-//   });
-// });
 
 /**
- * for functionality in /generalquery
+ * @author: Zhiyuan Li
+ * /generalquery : Get Price-to-Rent Ratio
  */
-router.post('/generalquery/queryOne', function(req, res){
-  var arg1 = req.body.arg1;
-  var arg2 = req.body.arg2;
-  var query = 'select count(*) from state';
+router.post('/generalquery/query0', function(req, res){
+  var mid = req.body.metroId;
+  var query = "SELECT Min(name), substr(time_stamp,1,4) AS year, round(AVG(ptr),2) AS Price_to_Rent_Ratio " + "\n" +
+              "FROM ptr p JOIN metro ON p.metro_id=metro.id " + "\n" +
+              "WHERE metro_id= "+ mid + "\n" +
+              "GROUP BY substr(time_stamp,1,4) " + "\n" +
+              "ORDER BY substr(time_stamp,1,4)";
   console.log(query);
   oracledb.getConnection(
     {
@@ -253,15 +262,146 @@ router.post('/generalquery/queryOne', function(req, res){
         function(err, result)
         {
           if (err) { console.error(err); return; }
-          //console.log(result);
-          //res.send(result);
-          res.json({
-            'status': 'success',
-            'count' : result
-          });
+          console.log(result);
+          res.send(result);
         });
     });
 });
+
+/**
+ * @author: Zhiyuan Li
+ * /generalquery : Metros With Highest Price-to-Rent Ratio at A Time Stamp
+ */
+router.post('/generalquery/query1Max', function(req, res){
+  var timestamp = req.body.timestamp;
+  var query= "SELECT * FROM \
+              ( \
+              SELECT name, ptr AS Price_to_Rent_ratio \
+              FROM ptr p JOIN metro ON p.metro_id=metro.id \
+              WHERE ptr > (SELECT ptr \
+              FROM ptr p JOIN metro ON p.metro_id=metro.id \
+              WHERE name='United States' AND time_stamp= '" + timestamp + "') AND time_stamp= '" + timestamp + "' \
+              ORDER BY Price_to_Rent_ratio DESC \
+              ) \
+              WHERE ROWNUM <= 10";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) {
+        console.log(err);
+      } 
+      console.log("Connection established...");
+        connection.execute(
+        query,
+        function(err, result)
+        {
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.send(result);
+        });
+    });
+});
+
+/**
+ * @author: Zhiyuan Li
+ * /generalquery : Metros With Lowest Price-to-Rent Ratio at A Time Stamp
+ */
+router.post('/generalquery/query1Min', function(req, res){
+  var timestamp = req.body.timestamp;
+  var query= "SELECT * FROM \
+              ( \
+              SELECT name, ptr AS Price_to_Rent_ratio \
+              FROM ptr p JOIN metro ON p.metro_id=metro.id \
+              WHERE ptr < (SELECT ptr \
+              FROM ptr p JOIN metro ON p.metro_id=metro.id \
+              WHERE name='United States' AND time_stamp= '" + timestamp + "') AND time_stamp= '" + timestamp + "' \
+              ORDER BY Price_to_Rent_ratio ASC \
+              ) \
+              WHERE ROWNUM <= 10";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) {
+        console.log(err);
+      } 
+      console.log("Connection established...");
+        connection.execute(
+        query,
+        function(err, result)
+        {
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.send(result);
+        });
+    });
+});
+
+/**
+ * @author: Zhiyuan Li
+ * /generalquery: compare sales with large and small ptr
+ */
+router.post('/generalquery/query2', function(req, res){
+  var ptrvar = req.body.ptrvar;
+  var query = "SELECT ROWNUM, state_name, avg_sales_small_ptr, avg_sales_large_ptr, ratio FROM ( " + "\n" +
+              "SELECT state_name, avg_sales_small_ptr, avg_sales_large_ptr, ratio " + "\n" +
+              "FROM STATE INNER JOIN ( " + "\n" +
+              "SELECT t.state_code, avg_sales_small_ptr, avg_sales_large_ptr, ROUND(avg_sales_small_ptr/avg_sales_large_ptr,2) AS ratio " + "\n" +
+              "FROM( " + "\n" +
+              "SELECT state_code, ROUND(AVG(num_sales)) AS avg_sales_small_ptr " + "\n" +
+              "FROM metro m, ptr p, salescount s " + "\n" +
+              "WHERE m.id = p.metro_id AND p.metro_id = s.metro_id AND ptr<= " + ptrvar + "\n" +
+              "GROUP BY state_code " + "\n" +
+              ") t INNER JOIN ( " + "\n" +
+              "SELECT state_code, ROUND(AVG(num_sales)) AS avg_sales_large_ptr " + "\n" +
+              "FROM metro m, ptr p, salescount s " + "\n" +
+              "WHERE m.id = p.metro_id AND p.metro_id = s.metro_id AND ptr> " + ptrvar + "\n" +
+              "GROUP BY state_code) t1 ON t.state_code=t1.state_code " + "\n" +
+              ") result " + "\n" +
+              "ON STATE.state_code = result.state_code " + "\n" +
+              "ORDER BY ratio)";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) {
+        console.log(err);
+      } 
+      console.log("Connection established...");
+        connection.execute(
+        query,
+        function(err, result)
+        {
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.send(result);
+        });
+    });
+});
+
+/**
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+ * 
+ * /busyseason below
+ * 
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+ */
 
 /**
  * get busy season
@@ -408,6 +548,98 @@ router.get('/busyseason/getBusySeasonReasonHomevalue', function(req, res) {
               ") t2 " + "\n" +
               "ON t1.month = t2.month " + "\n" +
               "ORDER BY ROUND(avg_home_price * avg_stl, 2)";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
+        });
+    });
+});
+
+/**
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+ * 
+ * @auther Shuqi Zhang
+ * /busyseason below
+ * 
+ * ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### ##### #####
+ */
+
+/**
+ * get average radio of rent to income from each state within a year(given by user)
+ * (state_code, percentage)
+ * @auther: Shuqi Zhang
+ */
+router.post('/rentalanalysis/getratio', function(req, res) {
+  console.log("enter query.........");
+  var year = req.body.year;
+  console.log(year);
+  var query = "WITH tmp AS (SELECT rentalprice.metro_id AS metro_id, ROUND(AVG(rentalprice.price)) AS avg_price" + "\n" +
+              "FROM rentalprice" + "\n" +
+              "WHERE substr(rentalprice.time_stamp,0,4)="+year+" AND property_type='singlefamily' " + "\n" + 
+              "GROUP BY rentalprice.metro_id)," + "\n" +
+              "tmp2 AS (SELECT * FROM metro JOIN tmp ON tmp.metro_id=metro.id)," + "\n" +
+              "tmp5 AS (SELECT state_code, ROUND(AVG(avg_price)*12) AS avg_price" + "\n" + 
+              "FROM tmp2" + "\n" +
+              "WHERE state_code<>'United States' AND avg_price<>0" + "\n" +
+              "GROUP BY state_code)," + "\n" +
+              "tmp3 AS (SELECT  metro_id,ROUND(AVG(mhi.income)) as income" + "\n" + 
+              "FROM mhi" + "\n" +
+              "WHERE substr(mhi.time_stamp,0,4)="+year+"" + "\n" +
+              "GROUP BY metro_id)," + "\n" +
+              "tmp4 AS (SELECT state_code, ROUND(AVG(tmp3.income)) AS avg_income" + "\n" +
+              "FROM metro JOIN tmp3 ON tmp3.metro_id=metro.id" + "\n" +
+              "WHERE state_code<>'United States'" + "\n" +
+              "GROUP BY state_code)" + "\n" +
+              "SELECT tmp4.state_code, ROUND((tmp5.avg_price/tmp4.avg_income)*100,1) AS percentage " + "\n" + 
+              "FROM tmp4 JOIN tmp5 ON tmp4.state_code=tmp5.state_code";
+  console.log(query);
+  oracledb.getConnection(
+    {
+      user          : "cis550project",
+      password      : "cis550project!",
+      connectString : "cis550project.cleob96hq2jj.us-east-1.rds.amazonaws.com/CIS550DB"
+    },
+      function(err, connection)
+    {
+      if (err) { console.log(err); } 
+      console.log("Connection established...");
+        connection.execute(query, function(err, result){
+          if (err) { console.error(err); return; }
+          console.log(result);
+          res.json(result);
+        });
+    });
+});
+
+
+/**
+ * get average radio of rent to income over years(no user input)
+ * (time_year, percentage)
+ * @auther: Shuqi Zhang
+ */
+router.post('/rentalanalysis/getratiograph', function(req, res) {
+  console.log("enter /rentalanalysis/getratiograph query.........");
+  var query = "WITH tmp1 AS (SELECT substr(rentalprice.time_stamp,0,4) AS time_year, ROUND(AVG(rentalprice.price)*12) as avg_price" + "\n" +
+              "FROM rentalprice " + "\n" + 
+              "GROUP BY substr(rentalprice.time_stamp,0,4)), " + "\n" +
+              "tmp2 AS (SELECT substr(mhi.time_stamp,0,4) AS time_year, ROUND(AVG(income)) AS avg_income" + "\n" +
+              "FROM mhi " + "\n" +
+              "GROUP BY substr(mhi.time_stamp,0,4))" + "\n" +
+              "SELECT tmp2.time_year, ROUND((tmp1.avg_price/tmp2.avg_income)*100,1) AS percentage" + "\n" +
+              "FROM tmp1 JOIN tmp2 ON tmp1.time_year=tmp2.time_year";
+
   console.log(query);
   oracledb.getConnection(
     {

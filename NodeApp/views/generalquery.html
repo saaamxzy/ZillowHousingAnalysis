@@ -25,15 +25,15 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link" href="/homevalues">Home Values</a>
           <a class="nav-item nav-link" href="/rentalprices">Rental Prices</a>
-          <a class="nav-item nav-link" href="/homevalues">Rental vs. Sale Prices</a>
           <a class="nav-item nav-link active" href="/generalquery">General Query</a>
           <a class="nav-item nav-link" href="/busyseason">Home Sales Busy Season</a>
+          <a class="nav-item nav-link" href="/rentalanalysis">Rental Analysis</a>
         </div>
       </div>
     </nav>
 
     <!-- All metros Content -->
-    <div class="container user-container" ng-controller="homeValuesController">
+    <!-- <div class="container user-container" ng-controller="homeValuesController">
       <div class="jumbotron">
         <div class="h5">All U.S. Metros and their IDs</div>
         <table class="table" id="metro_table">
@@ -62,22 +62,72 @@
           </tr>
         </table>
       </div>
-    </div>
+    </div> -->
 
-    <!-- Sample Content. You can either use this or make your own -->
-    <div class="container user-container" ng-controller="sqlControllerOne">
+    <!-- New Contents Start From Here -->
+    <div class="container user-container" ng-controller="generalqueryController">
+
       <div class="jumbotron">
-        <label>arg 1:</label>
-        <input type="text" class="input metroID1" placeholder="arg 1" ng-model="arg1" /> <br>
-        <label>arg 2:</label>
-        <input type="text" class="input metroID1" placeholder="arg 2" ng-model="arg2" /> <br>
+        <label style="font-size:24px"> Get Price-to-Rent Ratio </label> <br>
+        <label style="font-size:20px"> Input a metro id: </label>
+        <input style="margin:10px" type="text" class="input metroId" placeholder="394913" ng-model="metroId" /> <br>
+        <button type="button" class="button_bottom" name="findId" ng-click="query0(metroId)"><span>Go</span></button>
+        <table class="table" id="result0Table">
+          <tr> <th>Metro Name</th> <th>Year</th> <th>Average Price-to-Rent Ratio</th> </tr>
+          <tr ng-repeat = "x in result0">
+            <th>{{x[0]}}</th>
+            <th>{{x[1]}}</th>
+            <th>{{x[2]}}</th>
+          </tr>
+        </table>
       </div>
-    
-      <center>
-        <button type="button" class="button_bottom" name="findId" ng-click="queryOne()"><span>Plot</span></button>
-      </center>
-    </div>
-    <div id="plot" class="center_plt" style="width:600px;height:500px;"></div>
+
+      <div class="jumbotron">
+        <label style="font-size:24px"> Metros With Highest Price-to-Rent Ratio at A Time Stamp </label> <br>
+        <label style="font-size:20px"> Input a time stamp (from 2010-10 to 2019-02): </label>
+        <input style="margin:10px" type="text" class="input prt" placeholder="yyyy-mm" ng-model="timestampMax" /> <br>
+        <button type="button" class="button_bottom" name="findId" ng-click="query1Max(timestampMax)"><span>Go</span></button>
+        <table class="table" id="result1MaxTable">
+          <tr> <th>Metro Name</th> <th>Price-to-Rent Ratio</th> </tr>
+          <tr ng-repeat = "x in result1Max">
+            <th>{{x[0]}}</th>
+            <th>{{x[1]}}</th>
+          </tr>
+        </table>
+      </div>
+
+      <div class="jumbotron">
+        <label style="font-size:24px"> Metros With Lowest Price-to-Rent Ratio at A Time Stamp </label> <br>
+        <label style="font-size:20px"> Input a time stamp (from 2010-10 to 2019-02): </label>
+        <input style="margin:10px" type="text" class="input prt" placeholder="yyyy-mm" ng-model="timestampMin" /> <br>
+        <button type="button" class="button_bottom" name="findId" ng-click="query1Min(timestampMin)"><span>Go</span></button>
+        <table class="table" id="result1MinTable">
+          <tr> <th>Metro Name</th> <th>Price-to-Rent Ratio</th> </tr>
+          <tr ng-repeat = "x in result1Min">
+            <th>{{x[0]}}</th>
+            <th>{{x[1]}}</th>
+          </tr>
+        </table>
+
+      </div>
+
+      <div class="jumbotron">
+        <label style="font-size:24px"> Price-to-Rent Ratio VS House Sales </label> <br>
+        <label style="font-size:20px"> Input a Price-to-Rent Ratio: </label>
+        <input style="margin:10px" type="text" class="input prt" placeholder="16.0" ng-model="ptrvar" /> <br>
+        <button type="button" class="button_bottom" name="findId" ng-click="query2(ptrvar)"><span>Go</span></button>
+        <table class="table" id="result2Table">
+          <tr> <th>Row Number</th> <th>State Name</th> <th>Average Sales (Small PTR)</th> <th>Average Sales (Large PTR)</th> <th>Ratio</th> </tr>
+          <tr ng-repeat = "x in result2">
+            <th>{{x[0]}}</th>
+            <th>{{x[1]}}</th>
+            <th>{{x[2]}}</th>
+            <th>{{x[3]}}</th>
+            <th>{{x[4]}}</th>
+          </tr>
+        </table>
+      </div>
+    </div>>
     
     <!-- Include these before the end of body tag in every HTML file -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

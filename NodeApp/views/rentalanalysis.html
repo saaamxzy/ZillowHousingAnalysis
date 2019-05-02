@@ -1,0 +1,73 @@
+<html ng-app="angularjsNodejsTutorial">
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>rentalanalysis </title>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.2/angular.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="javascripts/app.js" type="text/javascript"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Custom styles for this template-->
+    <link href="/stylesheets/common.css" rel="stylesheet">
+    <!-- Include your custom css file here if you're making one -->
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <span class="navbar-brand center">rentalanalysis</span>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="/homevalues">Home Values</a>
+          <a class="nav-item nav-link" href="/rentalprices">Rental Prices</a>
+          <a class="nav-item nav-link" href="/generalquery">General Query</a>
+          <a class="nav-item nav-link" href="/busyseason">Home Sales Busy Season</a>
+          <a class="nav-item nav-link active" href="/rentalanalysis">Rental Analysis</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sample Content. You can either use this or make your own -->
+    <div class="container user-container" ng-controller="rentalanalysisController">
+      <div class="jumbotron">
+        <label style="font-size:20pt"> In each year, how many percentage of income people spend on rent house? </label> <br>
+        <!-- <div class="h5">Please select a year(2010-2018):</div> -->
+         <center>
+          <label>Please select a year(2010-2018):</label> <br> <br>
+          <input type="text" class="input year" placeholder="e.g. 2010" ng-model="year" /> <br> <br>
+          <button type = "button" ng-click="getRatio(year)" class="button">Submit</button> 
+         </center>
+         <br>
+         <div id="plot" class="center_plt" style="width:600px;height:500px;"></div> 
+      </div>
+    </div>
+
+    
+    <br>
+
+    <div class="container user-container" ng-controller="rentalanalysisController">
+      <div class="jumbotron">
+        <center>
+          <label style="font-size:20pt"> Average Ratio Over Years</label> <br>
+          <button type="button" class="button_bottom" name="rentalanalysisbutton" ng-click="getRatioGraph()"><span>Go!</span></button>
+          <br>
+          <br>
+          <div id="plot2" class="center_plt" style="width:600px;height:500px;"></div>
+        </center>
+        <!-- <div class="h5">Please select a year(2010-2018):</div> -->
+      </div>
+    </div>
+    <br>
+    
+    <!-- Include these before the end of body tag in every HTML file -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  </body>
+
+</html>

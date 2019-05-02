@@ -25,9 +25,9 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link active" href="/homevalues">Home Values</a>
           <a class="nav-item nav-link" href="/rentalprices">Rental Prices</a>
-          <a class="nav-item nav-link" href="/homevalues">Rental vs. Sale Prices</a>
           <a class="nav-item nav-link" href="/generalquery">General Query</a>
           <a class="nav-item nav-link" href="/busyseason">Home Sales Busy Season</a>
+          <a class="nav-item nav-link" href="/rentalanalysis">Rental Analysis</a>
         </div>
       </div>
     </nav>
@@ -102,6 +102,14 @@
 
     <!-- <div id="plot" style="width:600px;height:250px;"></div> -->
     <div id="plot" class="center_plt" style="width:600px;height:500px;"></div>
+    <br>
+    <div class="container user-container" ng-controller="homeValuesChoroplethController">
+      <div class="jumbotron">
+        <input type="text" class="input year" placeholder="2015" ng-model="year" />
+        <button type="button" class="rec-button" name="plotChoropleth" ng-click="getChoro(year)">Plot Choro</button>
+    <div id="choropleth" class="center_plt" style="width:600px;height:500px;"></div>
+    </div>
+  </div>
 <!--       <script>
   
 </script> -->
