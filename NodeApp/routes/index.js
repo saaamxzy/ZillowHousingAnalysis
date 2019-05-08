@@ -430,6 +430,23 @@ router.get('/busyseason/getbusyseason', function(req, res) {
               "IN (SELECT state_code, MAX(weight) FROM result GROUP BY state_code)) t2 " + "\n" +
               "ON t1.state_code=t2.state_code " + "\n" +
               "ORDER BY month";
+    var query = "WITH result AS( " + "\n" +
+                "SELECT state_code, month, SUM(weight) AS weight " + "\n" +
+                "FROM METRO INNER JOIN " + "\n" +
+                "(SELECT sales.metro_id, SUBSTR(time_stamp,6,2) AS month, AVG(num_sales/population) AS weight FROM " + "\n" +
+                "(SELECT m.state_code, s.metro_id, s.time_stamp, s.num_sales " + "\n" +
+                "FROM METRO m INNER JOIN SALESCOUNT s " + "\n" +
+                "ON m.id=s.metro_id AND s.time_stamp >= '2010-01') sales " + "\n" +
+                "INNER JOIN POPULATION pop " + "\n" +
+                "ON sales.state_code= pop.state_code AND SUBSTR(time_stamp,1,4)=pop.year " + "\n" +
+                "GROUP BY sales.metro_id, SUBSTR(time_stamp,6,2) ) METROSALES " + "\n" +
+                "ON METRO.id=METROSALES.metro_id " + "\n" +
+                "GROUP BY state_code, month " + "\n" +
+                ") " + "\n" +
+                "SELECT DISTINCT state_code, month, ROUND(1000*weight,2) AS per_sales " + "\n" +
+                "FROM result WHERE (state_code, weight) " + "\n" +
+                "IN (SELECT state_code, MAX(weight) FROM result GROUP BY state_code) " + "\n" +
+                "ORDER by month, state_code";
   console.log(query);
   oracledb.getConnection(
     {
