@@ -1,7 +1,10 @@
 # Zillow Housing Price Analysis
 
-Author: Zhengyuan Xu
-Collaborators: Zhiyuan Li, Shuqi Zhang, Wanci Yuan
+Author: Zhengyuan Xu zhengyx@seas.upenn.edu
+
+Collaborators: Zhiyuan Li, Shuqi Zhang, Wanci Yuan {cadenza, sshuqi, wanci}@seas.upenn.edu
+
+University of Pennsylvania
 
 ## Motivation for the idea
 Our project is interested in exploring the datasets of U.S. home’s sale prices and rental prices.
