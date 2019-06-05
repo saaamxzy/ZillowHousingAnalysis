@@ -1,5 +1,8 @@
 # Zillow Housing Price Analysis
 
+Author: Zhengyuan Xu
+Collaborators: Zhiyuan Li, Shuqi Zhang, Wanci Yuan
+
 ## Motivation for the idea
 Our project is interested in exploring the datasets of U.S. home’s sale prices and rental prices.
 We will look at historical listing/sale prices of all types of homes across U.S. and try to find any
